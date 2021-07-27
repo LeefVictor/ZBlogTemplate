@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: microServ
+  cloud:
+    consul:
+      host: xxxx.xxxxx.xxxx.xxx
+      discovery:
+        #hostname:  这个配置是指当前服务所在的主机地址， 不配置则是默认本机的地址
+        service-name: serv-microserv #小写
+        heartbeat:
+          enabled: true
+        scheme: http
+        acl-token: xxxxxxxxxxx
+      scheme: http
+    loadbalancer:
+      ribbon:
+        enabled: false
+server:
+  port: 23455
