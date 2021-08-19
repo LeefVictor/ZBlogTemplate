@@ -1,0 +1,175 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  contact:
+    name: zijian
+    email: xxx@co.com
+  license:
+    name: MIT
+servers:
+  - url: http://{domain}:{port}/v1
+    description: develop
+    variables: # 对应上面的占位符的可选值设置
+      domain:
+        default: localhost
+        description: 域名
+      port:
+        enum:
+          - '8888'
+          - '80'
+          - '443'
+        default: '8888'
+        description: 默认端口
+paths:
+  /pet:
+    get:
+      summary: get  pet # 简要总结接口功能
+      operationId: getPet # 唯一字符标识， 全局唯一
+      tags:
+        - pets # 标签， 方便分类
+      parameters:
+        - name: id #参数名称
+          in: query #参数位置， 可选， query(?a=xxx) header path(/a/{path}/) cookie
+          description: 据id查询
+          required: true
+          deprecated: false # 是否被废弃
+          allowEmptyValue: false # 是否允许空参数， 仅在in = query时有效， 默认是false
+          schema: # 此参数的类型
+            type: integer
+            format: int32
+      responses: # 响应结果
+        '200':
+          description: ok
+          headers:
+            header1:
+              description: header参数
+              schema:
+                type: string
+          content: # 响应体
+            application/json;charset=UTF-8: # 是json格式
+              schema:
+                $ref: "#/components/schemas/Pet" # 指向到components中自定义的Petscheme
+        default:
+          description: unexpected error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: string # 其他的状态码都是string类型
+  /pet/{id}:
+    get:
+      summary: get  pet # 简要总结接口功能
+      operationId: getPetWithPath # 唯一字符标识， 全局唯一
+      tags:
+        - pets # 标签， 方便分类
+      parameters:
+        - name: id #参数名称
+          in: path #参数位置， 可选， query(?a=xxx) header path(/a/{path}/) cookie
+          description: id
+          required: true
+          deprecated: false # 是否被废弃
+          allowEmptyValue: false # 是否允许空参数， 仅在in = query时有效， 默认是false
+          schema: # 此参数的类型
+            type: integer
+            format: int32
+      responses: # 响应结果
+        '200':
+          description: ok
+          content: # 响应体
+            application/json;charset=UTF-8: # 是json格式
+              schema:
+                $ref: "#/components/schemas/Pet" # 指向到components中自定义的Petscheme
+        default:
+          description: unexpected error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: string # 其他的状态码都是string类型
+  /petWithForm:
+    post:
+      summary: get  pet # 简要总结接口功能
+      operationId: petWithForm # 唯一字符标识， 全局唯一
+      tags:
+        - pets # 标签， 方便分类
+      requestBody: # 如果要指定媒体类型， 都用这个属性
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                id:
+                  type: integer
+                # 其他类型的参数
+                #file:
+                #  type: string
+                #  format: binary
+                #array:
+                #  type: array
+                #  items:
+                #    type: string # 如果是一个类型， 也可以用$ref
+                #json:
+                #  type: object
+                #  properties:
+                #    c-id:
+                #      type: integer
+                #    c-name:
+                #      type: string
+      responses: # 响应结果
+        '200':
+          description: ok
+          content: # 响应体
+            application/json;charset=UTF-8: # 是json格式
+              schema:
+                $ref: "#/components/schemas/Pet" # 指向到components中自定义的Petscheme
+        default:
+          description: unexpected error
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                type: string # 其他的状态码都是string类型
+  /pet/create:
+    post:
+      summary: Create a pet
+      operationId: createPets
+      tags:
+        - pets
+      requestBody: # 需要用json进行请求
+        description: json 请求体结构
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pet"
+      responses:
+        '201':
+          description: Null response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components: #api规范内的可重用组件，当没有被其他对象引用时， 这里的定义组件不影响现有结果， 其中的属性值命名需要符合 ^[a-zA-Z0-9\.\-_]+$
+  schemas:
+    Pet:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
