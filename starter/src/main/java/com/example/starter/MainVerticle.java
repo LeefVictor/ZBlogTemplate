@@ -53,7 +53,7 @@ public class MainVerticle extends AbstractVerticle {
   private static RouterBuilder routeConf(RouterBuilder routerBuilder){
     //register pet api
     for (PetPath value : PetPath.values()) {
-      routerBuilder.operation(value.name()).handler(value.handler());
+      routerBuilder.operation(value.name()).handler(value.cacheHandler()).handler(value.handler());
     }
 
     return routerBuilder;

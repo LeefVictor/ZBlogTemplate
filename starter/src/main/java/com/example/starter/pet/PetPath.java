@@ -5,11 +5,13 @@ import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Promise;
+import io.vertx.core.impl.logging.Logger;
+import io.vertx.core.impl.logging.LoggerFactory;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import java.util.List;
 
-public enum PetPath {
+public enum PetPath implements CacheHandler {
   //如果有多个handler要处理， 且值需要传递， 那么可以用 routingcontext.put() 和 get()两个方法，
 
   getPet() {
@@ -91,8 +93,17 @@ public enum PetPath {
 
   public abstract Handler<RoutingContext> handler();
 
-
-  public static void main(String[] args) {
-
+  @Override
+  public Handler<RoutingContext> cacheHandler() {
+    return r->{
+      Object obj = null;//from redis
+      if (obj != null) {
+        System.out.println("use cache");
+        r.response().end(Json.encodePrettily(obj));
+      } else {
+        System.out.println("no cache data, next handler");
+        r.next();
+      }
+    };
   }
 }
